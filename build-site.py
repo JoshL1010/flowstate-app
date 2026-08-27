@@ -1,18 +1,39 @@
-import base64, os, re
+import base64, os, subprocess
 
 MEDIA = "site/media"
-def uri(name):
-    ext = name.rsplit(".",1)[1]
-    mime = "video/mp4" if ext=="mp4" else "image/jpeg"
-    with open(os.path.join(MEDIA,name),"rb") as f:
-        return f"data:{mime};base64," + base64.b64encode(f.read()).decode()
 
-V = {n: uri(f"{n}.mp4") for n in ("reveal","launch","configure","appearance")}
-P = {n: uri(f"{n}.jpg") for n in ("reveal","launch","configure","appearance")}
-ICON = uri("icon.png")
+# Clips are referenced as files, not inlined.
+#
+# They used to be base64 data URIs, which made index.html 2.04 MB — 1.16 MB of video plus
+# the third base64 adds — and every byte of it blocking the first paint. The lazy loading
+# underneath (preload="none", src assigned on scroll) was doing nothing at all, because the
+# bytes had already arrived inside the HTML. The same files are published beside the page
+# and served from the same origin, so pointing at them cuts the document to about 30 KB and
+# makes the deferred loading real.
+def src(name):
+    return f"media/{name}"
 
-HEAD = f'''<title>FlowState for Mac</title>
-<meta name="description" content="A native macOS workspace launcher. Opens the editor, terminal, repository and pages a project needs \u2014 arranged \u2014 in one keystroke. Free while in beta.">
+def shape(name):
+    """The clip's own aspect ratio, so its frame occupies the right space before it loads
+    and the page does not jump when it does."""
+    try:
+        out = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "v:0",
+             "-show_entries", "stream=width,height", "-of", "csv=p=0",
+             os.path.join(MEDIA, f"{name}.mp4")],
+            capture_output=True, text=True, check=True).stdout.strip()
+        w, h = (int(v) for v in out.split(",")[:2])
+        return f"{w} / {h}"
+    except Exception:
+        return "16 / 10"
+
+CLIPS = ("reveal", "launch", "configure", "appearance")
+SHAPE = {n: shape(n) for n in CLIPS}
+ICON = "media/icon.png"
+
+HEAD = f'''<meta charset="utf-8">
+<title>FlowState for Mac</title>
+<meta name="description" content="A native macOS workspace launcher. Opens the editor, terminal, repository and pages a project needs — arranged — in one keystroke. Free while in beta.">
 <link rel="icon" href="{ICON}">
 <link rel="apple-touch-icon" href="{ICON}">
 <meta property="og:type" content="website">
@@ -36,6 +57,8 @@ HEAD = f'''<title>FlowState for Mac</title>
   --live:#0E6DB2;--live-soft:#E3F0F8;
   --sa:#102A38;
   --sh:0 2px 4px rgba(8,13,16,.04),0 24px 60px rgba(8,13,16,.12);
+  --sh-lift:0 3px 8px rgba(8,13,16,.06),0 36px 84px rgba(8,13,16,.17);
+  --glow:rgba(14,109,178,.13);
   --ease:cubic-bezier(.22,.9,.28,1);
 }}
 @media (prefers-color-scheme:dark){{:root:not([data-theme="light"]){{
@@ -44,6 +67,8 @@ HEAD = f'''<title>FlowState for Mac</title>
   --rule:#1C2326;--rule2:#313A3E;
   --live:#5CBBF2;--live-soft:#0B2839;
   --sh:0 2px 4px rgba(0,0,0,.5),0 28px 70px rgba(0,0,0,.6);
+  --sh-lift:0 3px 8px rgba(0,0,0,.55),0 40px 96px rgba(0,0,0,.7);
+  --glow:rgba(92,187,242,.10);
 }}}}
 :root[data-theme="dark"]{{
   --paper:#070B0D;--raised:#10161A;--sunk:#0B1113;
@@ -51,6 +76,8 @@ HEAD = f'''<title>FlowState for Mac</title>
   --rule:#1C2326;--rule2:#313A3E;
   --live:#5CBBF2;--live-soft:#0B2839;
   --sh:0 2px 4px rgba(0,0,0,.5),0 28px 70px rgba(0,0,0,.6);
+  --sh-lift:0 3px 8px rgba(0,0,0,.55),0 40px 96px rgba(0,0,0,.7);
+  --glow:rgba(92,187,242,.10);
 }}
 *{{box-sizing:border-box}}
 html{{scroll-behavior:smooth}}
@@ -66,6 +93,11 @@ kbd{{font-family:"IBM Plex Mono",monospace;font-size:.78em;border:1px solid var(
   border-radius:4px;padding:.1em .4em;white-space:nowrap}}
 .mono{{font-family:"IBM Plex Mono",monospace}}
 
+/* Keyboard users reach the download without tabbing the whole page first. */
+.skip{{position:absolute;left:-9999px;top:0;z-index:100;background:var(--ink);color:var(--paper);
+  padding:12px 20px;border-radius:0 0 9px 0;font-weight:600;text-decoration:none}}
+.skip:focus{{left:0}}
+
 .rv{{opacity:0;transition:opacity .85s var(--ease),transform .85s var(--ease);
   transition-delay:calc(var(--i,0)*95ms)}}
 .rv-u{{transform:translateY(30px)}}
@@ -78,11 +110,16 @@ nav{{position:fixed;inset:0 0 auto;z-index:60;border-bottom:1px solid transparen
   transition:background .35s,border-color .35s}}
 nav.stuck{{background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(16px);
   border-bottom-color:var(--rule)}}
-.nav-in{{display:flex;align-items:center;padding:16px 0}}
+.nav-in{{display:flex;align-items:center;gap:16px;padding:16px 0}}
 .logo{{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-.02em;
   text-decoration:none;color:var(--ink)}}
 .logo-mark{{width:26px;height:26px;flex:none;border-radius:6px;
   background-image:url("{ICON}");background-size:cover}}
+.nav-links{{margin-left:auto;display:flex;align-items:center;gap:22px}}
+.nav-links a.plain{{color:var(--ink2);text-decoration:none;font-size:14.5px;font-weight:500;
+  transition:color .2s}}
+.nav-links a.plain:hover{{color:var(--ink)}}
+@media (max-width:620px){{.nav-links a.plain{{display:none}}}}
 .btn{{display:inline-flex;align-items:center;gap:9px;border:1px solid transparent;font-weight:600;
   font-size:15px;padding:11px 20px;border-radius:9px;text-decoration:none;cursor:pointer;
   transition:transform .18s var(--ease),box-shadow .18s,border-color .18s}}
@@ -91,9 +128,13 @@ nav.stuck{{background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-f
 .btn-line{{background:transparent;color:var(--ink);border-color:var(--rule2)}}
 .btn-line:hover{{border-color:var(--ink);transform:translateY(-2px)}}
 .btn-lg{{font-size:16px;padding:15px 30px;border-radius:11px}}
-nav .btn{{margin-left:auto}}
 
-.hero{{padding:clamp(104px,14vw,180px) 0 0}}
+/* A single soft light behind the headline. The hero was a flat field with type on it,
+   which made a product about a glowing panel look like a text document. */
+.hero{{padding:clamp(104px,14vw,180px) 0 0;position:relative;isolation:isolate}}
+.hero::before{{content:"";position:absolute;z-index:-1;inset:-10% -20% auto auto;
+  width:min(900px,90vw);aspect-ratio:1;pointer-events:none;
+  background:radial-gradient(circle at 65% 35%,var(--glow),transparent 62%)}}
 .hero h1{{font-size:clamp(2.9rem,7.8vw,6.4rem);max-width:13ch;letter-spacing:-.04em}}
 .hero h1 .soft{{color:var(--ink3)}}
 .hero .sub{{margin-top:30px;font-size:clamp(17px,1.75vw,19.5px);color:var(--ink2);max-width:45ch}}
@@ -102,9 +143,15 @@ nav .btn{{margin-left:auto}}
 
 /* video frames — the product, shown rather than described */
 .screen{{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--rule2);
-  box-shadow:var(--sh);background:var(--sa);line-height:0}}
-.screen video{{width:100%;height:auto;display:block}}
+  box-shadow:var(--sh);background:var(--sa);line-height:0;
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease)}}
+.screen:hover{{transform:translateY(-4px);box-shadow:var(--sh-lift)}}
+.screen video{{width:100%;height:auto;display:block;background:var(--sa)}}
 .hero-screen{{margin-top:clamp(44px,5.5vw,72px)}}
+/* Says what is being shown. A silent looping clip with no label leaves the reader
+   working out what they are looking at while it is already halfway through. */
+.cap{{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  letter-spacing:.04em;color:var(--ink3);line-height:1.5}}
 
 .story{{padding:clamp(76px,10vw,132px) 0}}
 .story+.story{{border-top:1px solid var(--rule)}}
@@ -144,25 +191,39 @@ td{{color:var(--ink2)}}
 .close p{{margin-top:22px;color:var(--ink2);max-width:44ch;margin-inline:auto}}
 .close .cta{{justify-content:center;margin-top:36px}}
 footer{{border-top:1px solid var(--rule);padding:32px 0 68px;color:var(--ink3);font-size:13px;
-  font-family:"IBM Plex Mono",monospace;display:flex;flex-wrap:wrap;gap:8px 26px}}
+  font-family:"IBM Plex Mono",monospace}}
+footer a{{color:var(--ink3)}}
+footer a:hover{{color:var(--ink2)}}
 
 @media (prefers-reduced-motion:reduce){{
   html{{scroll-behavior:auto}}
   *,*::before,*::after{{transition-duration:.01ms!important;animation:none!important}}
   .rv{{opacity:1;transform:none}}
+  .screen:hover{{transform:none}}
 }}
 </style>
 '''
 
-def screen(name, cls=""):
-    return (f'<div class="screen {cls}">'
-            f'<video muted playsinline loop preload="none" poster="{P[name]}" '
-            f'data-src="{V[name]}"></video></div>')
+def screen(name, caption, cls=""):
+    return (f'<div class="screen {cls}" style="aspect-ratio:{SHAPE[name]}">'
+            f'<video muted playsinline loop preload="none" '
+            f'poster="{src(name + ".jpg")}" data-src="{src(name + ".mp4")}" '
+            f'aria-label="{caption}"></video></div>'
+            f'<p class="cap">{caption}</p>')
+
+DOWNLOAD = "https://github.com/JoshL1010/flowstate-app/releases/latest/download/FlowState.dmg"
+RELEASES = "https://github.com/JoshL1010/flowstate-app/releases"
 
 BODY = f'''
+<a class="skip" href="#get">Skip to download</a>
+
 <nav id="nav"><div class="wrap nav-in">
   <a class="logo" href="#top"><span class="logo-mark"></span> FlowState</a>
-  <a class="btn btn-line" href="https://github.com/JoshL1010/flowstate-app/releases/latest/download/FlowState.dmg">Download</a>
+  <span class="nav-links">
+    <a class="plain" href="#pricing">Pricing</a>
+    <a class="plain" href="{RELEASES}">Release notes</a>
+    <a class="btn btn-line" href="{DOWNLOAD}">Download</a>
+  </span>
 </div></nav>
 
 <div id="top" class="hero"><div class="wrap">
@@ -173,10 +234,12 @@ BODY = f'''
     finished thinking.
   </p>
   <div class="cta rv rv-u" style="--i:2">
-    <a class="btn btn-solid btn-lg" href="https://github.com/JoshL1010/flowstate-app/releases/latest/download/FlowState.dmg">Download for macOS</a>
-    <span class="note">Free in beta · macOS 15 or later · 2.7 MB</span>
+    <a class="btn btn-solid btn-lg" href="{DOWNLOAD}">Download for macOS</a>
+    <span class="note">Free in beta · macOS 15 or later · 2.9 MB</span>
   </div>
-  <div class="hero-screen rv rv-s" style="--i:3">{screen("reveal")}</div>
+  <div class="hero-screen rv rv-s" style="--i:3">
+    {screen("launch", "One keystroke: the editor, the terminal and the project&#8217;s pages, arranged.")}
+  </div>
 </div></div>
 
 <div class="story"><div class="wrap sgrid">
@@ -187,29 +250,35 @@ BODY = f'''
       There is no Dock icon and nothing to arrange. It appears when you want it and is gone
       the moment you look away.</p>
   </div>
-  <div class="rv rv-r" style="--i:1">{screen("launch")}</div>
+  <div class="rv rv-r" style="--i:1">
+    {screen("reveal", "The panel arriving at the screen edge, and leaving again.")}
+  </div>
 </div></div>
 
 <div class="story flip"><div class="wrap sgrid">
   <div class="scopy rv rv-r">
-    <div class="step">02 — LAUNCH</div>
-    <h2>One action opens all of it.</h2>
-    <p>The editor at the right folder. Terminal already in the working directory. The
-      repository and the pages you keep reopening — every one of them, in the order you set,
-      with the main windows arranged side by side.</p>
+    <div class="step">02 — SET IT UP</div>
+    <h2>You decide what opens.</h2>
+    <p>Everything a project needs sits in one list — the app, the terminal, the repository,
+      the pages, the files. A switch beside each one says whether it opens with Launch, and a
+      panel reads back exactly what will happen, in the order it will happen.</p>
   </div>
-  <div class="rv rv-l" style="--i:1">{screen("configure")}</div>
+  <div class="rv rv-l" style="--i:1">
+    {screen("configure", "Setting up a project, with the Launch plan updating as you edit.")}
+  </div>
 </div></div>
 
 <div class="story"><div class="wrap sgrid">
   <div class="scopy rv rv-l">
     <div class="step">03 — MAKE IT YOURS</div>
     <h2>Built to sit on your screen all day.</h2>
-    <p>Eight palettes or your own colours, with width, density, text size, corners and motion
-      to match. The preview updates as you drag, and a theme you like can be saved and handed
-      to someone else.</p>
+    <p>Eight palettes or your own colours, with width, spacing, text size, typeface, corners
+      and how see-through the panel is. Every option shows you what it does before you pick
+      it, and a look you like can be saved and handed to someone else.</p>
   </div>
-  <div class="rv rv-r" style="--i:1">{screen("appearance")}</div>
+  <div class="rv rv-r" style="--i:1">
+    {screen("appearance", "Appearance Studio, where each option previews itself.")}
+  </div>
 </div></div>
 
 <div class="quiet"><div class="wrap">
@@ -266,18 +335,23 @@ BODY = f'''
     that is far more useful than a compliment.
   </p>
   <div class="cta rv rv-u" style="--i:2">
-    <a class="btn btn-solid btn-lg" href="https://github.com/JoshL1010/flowstate-app/releases/latest/download/FlowState.dmg">Download FlowState</a>
-    <span class="note">macOS 15+ · Apple silicon &amp; Intel · 2.7 MB</span>
+    <a class="btn btn-solid btn-lg" href="{DOWNLOAD}">Download FlowState</a>
+    <span class="note">macOS 15+ · Apple silicon &amp; Intel · 2.9 MB</span>
   </div>
 </div></div>
 
 <footer><div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 26px">
-  <span>FlowState 0.2.4 beta</span><span>Swift &amp; SwiftUI</span><span>Made for macOS</span>
+  <span>FlowState 0.2.4 beta</span>
+  <a href="{RELEASES}">Release notes</a>
+  <span>Swift &amp; SwiftUI</span>
+  <span>Made for macOS</span>
 </div></footer>
 
 <script>
 (function(){{
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Someone on a metered connection gets the poster frames and nothing else.
+  var thrifty = matchMedia("(prefers-reduced-data: reduce)").matches;
 
   var rv = document.querySelectorAll(".rv");
   if (reduce) rv.forEach(function(el){{ el.classList.add("in"); }});
@@ -291,8 +365,10 @@ BODY = f'''
   var nav=document.getElementById("nav");
   addEventListener("scroll",function(){{ nav.classList.toggle("stuck", scrollY>10); }},{{passive:true}});
 
-  // Clips are heavy, so each one is attached and started only when it is actually on
-  // screen, and paused again when it leaves. Nothing downloads until it is needed.
+  // Each clip is fetched and started only once it is actually on screen, and paused again
+  // when it leaves. Now that the files are not inlined in this document, that defers real
+  // bytes rather than only deferring the decode.
+  if (thrifty) return;
   var vids=[].slice.call(document.querySelectorAll("video[data-src]"));
   var vo=new IntersectionObserver(function(es){{
     es.forEach(function(e){{
@@ -308,6 +384,11 @@ BODY = f'''
 </script>
 '''
 
-open("site/index.html","w").write(HEAD + BODY)
+# Explicit encoding on both ends: the document declares UTF-8 in its first bytes and is
+# written as UTF-8 regardless of the locale of the machine building it. The page carried
+# neither before and rendered only because GitHub Pages happens to send a charset header —
+# opened from a file, or served by anything that does not, every em dash broke.
+with open("site/index.html", "w", encoding="utf-8") as f:
+    f.write(HEAD + BODY)
 size = os.path.getsize("site/index.html")
-print(f"  site/index.html written: {size/1_000_000:.2f} MB")
+print(f"  site/index.html written: {size/1024:.1f} KB")
