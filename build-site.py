@@ -341,7 +341,7 @@ BODY = f'''
 </div></div>
 
 <footer><div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 26px">
-  <span>FlowState 0.2.4 beta</span>
+  <span>FlowState 0.2.5 beta</span>
   <a href="{RELEASES}">Release notes</a>
   <span>Swift &amp; SwiftUI</span>
   <span>Made for macOS</span>
