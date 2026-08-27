@@ -272,7 +272,7 @@ BODY = f'''
 </div></div>
 
 <footer><div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 26px">
-  <span>FlowState 0.2.1 beta</span><span>Swift &amp; SwiftUI</span><span>Made for macOS</span>
+  <span>FlowState 0.2.2 beta</span><span>Swift &amp; SwiftUI</span><span>Made for macOS</span>
 </div></footer>
 
 <script>
