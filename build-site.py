@@ -149,7 +149,7 @@ def screen(name, cls=""):
 BODY = f'''
 <nav id="nav"><div class="wrap nav-in">
   <a class="logo" href="#top"><span class="logo-mark"></span> FlowState</a>
-  <a class="btn btn-line" href="#get">Download</a>
+  <a class="btn btn-line" href="https://github.com/JoshL1010/flowstate-app/releases/download/v0.2.0/FlowState-0.2.0.dmg">Download</a>
 </div></nav>
 
 <div id="top" class="hero"><div class="wrap">
@@ -160,8 +160,7 @@ BODY = f'''
     finished thinking.
   </p>
   <div class="cta rv rv-u" style="--i:2">
-    <!-- REPLACE href WITH THE DOWNLOAD URL -->
-    <a class="btn btn-solid btn-lg" href="#get">Download for macOS</a>
+    <a class="btn btn-solid btn-lg" href="https://github.com/JoshL1010/flowstate-app/releases/download/v0.2.0/FlowState-0.2.0.dmg">Download for macOS</a>
     <span class="note">Free in beta · macOS 15 or later · 2.7 MB</span>
   </div>
   <div class="hero-screen rv rv-s" style="--i:3">{screen("reveal")}</div>
@@ -254,8 +253,7 @@ BODY = f'''
     that is far more useful than a compliment.
   </p>
   <div class="cta rv rv-u" style="--i:2">
-    <!-- REPLACE href WITH THE DOWNLOAD URL -->
-    <a class="btn btn-solid btn-lg" href="#">Download FlowState 0.2.0</a>
+    <a class="btn btn-solid btn-lg" href="https://github.com/JoshL1010/flowstate-app/releases/download/v0.2.0/FlowState-0.2.0.dmg">Download FlowState 0.2.0</a>
     <span class="note">macOS 15+ · Apple silicon &amp; Intel · 2.7 MB</span>
   </div>
 </div></div>
