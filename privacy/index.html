@@ -1,0 +1,152 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../media/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--paper:#F7F8F7;--ink:#080D10;--ink2:#525C5F;--ink3:#8A9396;--rule:#E2E6E2;
+  --live:#0E6DB2;--raised:#FFF;--warn:#8A5A00;--warn-bg:#FFF6E5}
+@media (prefers-color-scheme:dark){:root{--paper:#070B0D;--ink:#EDEFEB;--ink2:#98A2A5;
+  --ink3:#667073;--rule:#1C2326;--live:#5CBBF2;--raised:#10161A;--warn:#F0C97A;--warn-bg:#2A2011}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:block;
+  background:var(--paper);color:var(--ink);padding:32px 22px;
+  font-family:"Instrument Sans",ui-sans-serif,-apple-system,system-ui,sans-serif;
+  font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+main{width:min(100%,560px)}
+h1{margin:0 0 14px;font-size:clamp(1.7rem,4vw,2.3rem);font-weight:600;letter-spacing:-.03em;
+  line-height:1.1}
+p{margin:0 0 16px;color:var(--ink2)}
+.mono{font-family:"IBM Plex Mono",monospace}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:30px;font-weight:600;
+  text-decoration:none;color:var(--ink);letter-spacing:-.02em}
+.brand span{width:24px;height:24px;border-radius:6px;background-image:url("../media/icon.png");
+  background-size:cover}
+.card{background:var(--raised);border:1px solid var(--rule);border-radius:13px;padding:20px}
+.licence{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;
+  word-break:break-all;user-select:all;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);
+  border:0;font:inherit;font-weight:600;font-size:15px;padding:12px 22px;border-radius:9px;
+  text-decoration:none;cursor:pointer}
+.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.note{font-size:13.5px;color:var(--ink3);margin-top:22px}
+.warn{background:var(--warn-bg);color:var(--warn);border-radius:9px;padding:13px 15px;
+  font-size:14px;margin-top:18px}
+a{color:var(--live)}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid var(--rule);
+  border-top-color:var(--live);border-radius:50%;animation:s .8s linear infinite;
+  vertical-align:-2px;margin-right:8px}
+@keyframes s{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+<style>
+body{padding:0}
+main{width:min(100%,720px);margin:0 auto;padding:44px 22px 90px}
+h2{margin:38px 0 12px;font-size:1.22rem;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+h2:first-of-type{margin-top:30px}
+p,li{color:var(--ink2)}
+ul{margin:0 0 16px;padding-left:20px}
+li{margin-bottom:7px}
+strong{color:var(--ink);font-weight:600}
+.updated{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink3);
+  margin-bottom:0}
+.lede{font-size:17.5px;color:var(--ink2)}
+.box{background:var(--raised);border:1px solid var(--rule);border-radius:11px;
+  padding:16px 18px;margin:20px 0}
+.box p:last-child{margin-bottom:0}
+footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink3)}
+footer a{color:var(--ink3);margin-right:18px}
+</style>
+<title>Privacy Policy — FlowState</title>
+<main>
+  <a class="brand" href="../"><span></span> FlowState</a>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated 28 August 2026</p>
+
+  <p class="lede">FlowState is built to know as little about you as possible. The application
+  has no account, no analytics and no telemetry, and your projects never leave your Mac.
+  This page says exactly what does exist, because a privacy policy that only makes promises
+  is not much use.</p>
+
+  <h2>What stays on your Mac</h2>
+  <p>Everything you create in FlowState — projects, folder paths, shortcuts, websites,
+  themes and preferences — is stored in files in your own Application Support folder. It is
+  never uploaded, never synced, and never seen by anyone else. Deleting FlowState and that
+  folder removes it completely.</p>
+
+  <h2>What FlowState sends, and when</h2>
+  <ul>
+    <li><strong>Without a subscription: nothing.</strong> A free or trial copy of FlowState
+      makes no network requests of its own at all.</li>
+    <li><strong>With a subscription:</strong> FlowState contacts its own licensing service to
+      renew your licence, roughly once a month. It sends the licence it already holds, and
+      nothing else — no projects, no paths, no usage.</li>
+  </ul>
+  <p>Opening a link or launching a workspace opens your own browser and applications. Those
+  connections are between you and those sites, exactly as if you had opened them yourself.</p>
+
+  <h2>The licensing service</h2>
+  <p>When you subscribe, a small service run for FlowState stores the minimum needed to know
+  that your subscription is live:</p>
+  <ul>
+    <li>Your Paddle customer and subscription identifiers</li>
+    <li>The email address you used at checkout</li>
+    <li>Whether the subscription is active, and when that was last updated</li>
+  </ul>
+  <p>It holds <strong>no card details, no address and no name</strong> — Paddle has those,
+  and does not pass them on. The service runs on Cloudflare Workers. The records are kept
+  while your subscription exists and removed when it has been over for 90 days.</p>
+
+  <h2>Payment</h2>
+  <p>Payments are taken by <strong>Paddle.com Market Ltd</strong>, the merchant of record for
+  FlowState. Your card details go to Paddle and never to Joshua Lafrentz — they are never seen
+  by, or stored on, anything FlowState runs. Paddle's handling of your information is covered
+  by its own <a href="https://www.paddle.com/legal/privacy">Privacy Notice</a>.</p>
+
+  <h2>The website and downloads</h2>
+  <p>This site has no analytics, no cookies and no trackers. It is hosted on GitHub Pages,
+  and downloads come from GitHub Releases; both keep standard server logs, including IP
+  addresses, under <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement">GitHub's
+  privacy statement</a>. The site loads fonts from Google Fonts, which sees the request for
+  the font file.</p>
+
+  <h2>Permissions FlowState asks for</h2>
+  <ul>
+    <li><strong>Accessibility</strong> — to move and resize windows on your screen. It reads
+      window positions to put them back afterwards. Nothing is recorded or sent, and
+      declining it leaves everything else working.</li>
+    <li><strong>Automation</strong> — asked for only if you have FlowState open a workspace
+      link in a new Safari or Chrome window. It sends that browser a URL and nothing more.</li>
+  </ul>
+  <p>Both can be withdrawn at any time in System Settings, and FlowState keeps running.</p>
+
+  <h2>Your rights</h2>
+  <div class="box">
+    <p>FlowState is operated from New Zealand and follows the <strong>Privacy Act 2020</strong>.
+    You may ask what information is held about you, ask for it to be corrected, or ask for it
+    to be deleted — email <a href="mailto:joshlafrentz@gmail.com">joshlafrentz@gmail.com</a> and you will
+    have an answer within 20 working days.</p>
+    <p>If you are not satisfied with the response, you may complain to the
+    <a href="https://www.privacy.org.nz">Office of the Privacy Commissioner</a>. If you are in
+    the EU or UK, you have equivalent rights under the GDPR, and Paddle acts as the controller
+    for payment information.</p>
+  </div>
+
+  <h2>Changes</h2>
+  <p>This page is dated, and is revised whenever FlowState starts or stops sending anything.
+  Material changes are announced by email to subscribers.</p>
+
+  <h2>Contact</h2>
+  <p>Joshua Lafrentz · <a href="mailto:joshlafrentz@gmail.com">joshlafrentz@gmail.com</a></p>
+
+  <footer>
+  <a href="../">FlowState</a>
+  <a href="../terms/">Terms</a>
+  <a href="../refunds/">Refunds</a>
+  <a href="../privacy/">Privacy</a>
+</footer>
+</main>

@@ -298,7 +298,7 @@ BODY = f'''
   <table class="rv rv-u" style="--i:1"><tbody>
     <tr><th scope="row">Accessibility</th><td>Optional. Lets FlowState move and resize windows — decline it and everything else still works, it simply stops rearranging anything.</td></tr>
     <tr><th scope="row">Automation</th><td>Optional. Requested only if you ask a workspace link to open in a new Safari or Chrome window on your current desktop.</td></tr>
-    <tr><th scope="row">Network</th><td>None. FlowState makes no network requests.</td></tr>
+    <tr><th scope="row">Network</th><td>None while FlowState is free. A paid subscription checks its licence against FlowState&rsquo;s own service about once a month, and sends nothing else &mdash; no projects, no paths, no usage. <a href="privacy/">Full detail</a>.</td></tr>
     <tr><th scope="row">Signature</th><td>Developer ID, notarized by Apple. Both permissions revocable at any time in System Settings.</td></tr>
   </tbody></table>
 </div></div>
@@ -350,8 +350,10 @@ BODY = f'''
 
 <footer><div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 26px">
   <span>FlowState 0.2.5 beta</span>
+  <a href="terms/">Terms</a>
+  <a href="refunds/">Refunds</a>
+  <a href="privacy/">Privacy</a>
   <a href="{RELEASES}">Release notes</a>
-  <span>Swift &amp; SwiftUI</span>
   <span>Made for macOS</span>
 </div></footer>
 
@@ -562,6 +564,306 @@ THANKS = PAGE_STYLE + f"""<title>Thank you — FlowState</title>
 </script>
 """
 
+# ── Legal ──────────────────────────────────────────────────────────────────────────────
+#
+# Paddle requires a seller to publish terms, a refund policy and a support route before it
+# will verify the account, and these are also the pages a customer reads when something has
+# gone wrong. Written for New Zealand, where FlowState is sold from.
+#
+# THREE VALUES BELOW ARE YOURS TO CONFIRM. They are deliberately real and working rather
+# than obvious placeholders, because a legal page published with "YOUR_COMPANY_HERE" in it
+# is worse than one naming a person accurately.
+
+# The legal entity behind FlowState. A sole trader trades under their own name; change this
+# if FlowState is ever put into a company, because the entity named here is the one a
+# customer would have a contract with.
+LEGAL_ENTITY = "Joshua Lafrentz"
+
+# Where support reaches a human. Move this to an address on the FlowState domain once one
+# exists — but never leave it pointing somewhere unmonitored, because Paddle checks it and
+# customers use it.
+LEGAL_CONTACT = "joshlafrentz@gmail.com"
+
+LEGAL_UPDATED = "28 August 2026"
+
+# PAGE_STYLE is already-evaluated f-string output, so its braces are single here. Matching
+# on the doubled form silently matches nothing, and the page keeps the vertical centring
+# meant for a one-sentence page while carrying two thousand words.
+LEGAL_STYLE = PAGE_STYLE.replace(
+    "body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;",
+    "body{margin:0;min-height:100vh;display:block;",
+) + """<style>
+body{padding:0}
+main{width:min(100%,720px);margin:0 auto;padding:44px 22px 90px}
+h2{margin:38px 0 12px;font-size:1.22rem;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+h2:first-of-type{margin-top:30px}
+p,li{color:var(--ink2)}
+ul{margin:0 0 16px;padding-left:20px}
+li{margin-bottom:7px}
+strong{color:var(--ink);font-weight:600}
+.updated{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink3);
+  margin-bottom:0}
+.lede{font-size:17.5px;color:var(--ink2)}
+.box{background:var(--raised);border:1px solid var(--rule);border-radius:11px;
+  padding:16px 18px;margin:20px 0}
+.box p:last-child{margin-bottom:0}
+footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink3)}
+footer a{color:var(--ink3);margin-right:18px}
+</style>
+"""
+
+LEGAL_FOOTER = f"""<footer>
+  <a href="{PAGE_HOME}">FlowState</a>
+  <a href="../terms/">Terms</a>
+  <a href="../refunds/">Refunds</a>
+  <a href="../privacy/">Privacy</a>
+</footer>"""
+
+TERMS = LEGAL_STYLE + f"""<title>Terms of Service — FlowState</title>
+<main>
+  <a class="brand" href="{PAGE_HOME}"><span></span> FlowState</a>
+  <h1>Terms of Service</h1>
+  <p class="updated">Last updated {LEGAL_UPDATED}</p>
+
+  <p class="lede">These terms cover your use of FlowState, a macOS application provided by
+  {LEGAL_ENTITY}, a sole trader based in New Zealand. Installing or using FlowState means
+  you accept them.</p>
+
+  <div class="box">
+    <p><strong>Who you buy from.</strong> FlowState is sold through Paddle.com Market Ltd,
+    which acts as the <strong>merchant of record</strong>. Your purchase contract is with
+    Paddle, and Paddle appears on your bank statement. Paddle handles payment, sales tax and
+    VAT, refunds and chargebacks under its own
+    <a href="https://www.paddle.com/legal/checkout-buyer-terms">Buyer Terms</a>.
+    {LEGAL_ENTITY} licenses the software to you and provides support for it.</p>
+  </div>
+
+  <h2>Your licence</h2>
+  <p>While your subscription is active you have a personal, non-exclusive, non-transferable
+  licence to install and use FlowState on Macs you own or control. The licence is for you;
+  it is not sold, and it does not transfer with a resold computer.</p>
+
+  <h2>What you may not do</h2>
+  <ul>
+    <li>Share, resell, sublicense or publish your licence key. It identifies your
+      subscription, and a shared key can be revoked.</li>
+    <li>Remove or work around the licensing in the application.</li>
+    <li>Use FlowState in a way that breaks New Zealand law, or the law where you are.</li>
+  </ul>
+  <p>You may inspect the application on your own machine, and you may keep using it after a
+  subscription ends within the limits of the free tier described below.</p>
+
+  <h2>Subscription and billing</h2>
+  <ul>
+    <li>FlowState Pro is <strong>US$7 per month</strong>, billed by Paddle until cancelled.</li>
+    <li>A free trial runs inside the application before any payment, and needs no card.</li>
+    <li>Cancel at any time. Your subscription keeps working until the end of the period you
+      have already paid for; it is not cut short.</li>
+    <li>Prices may change. Existing subscribers get at least 30 days' notice by email
+      before a change takes effect, and may cancel instead.</li>
+  </ul>
+
+  <h2>What happens when a subscription ends</h2>
+  <p><strong>Nothing you made is taken away.</strong> Your projects, shortcuts, themes and
+  preferences are files on your own Mac and remain yours and readable. FlowState continues
+  to run with its free tier: a limited number of projects, and without window arrangement,
+  Appearance Studio or AI handoff.</p>
+
+  <h2>Availability and support</h2>
+  <p>FlowState is made by one person. Support is by email at
+  <a href="mailto:{LEGAL_CONTACT}">{LEGAL_CONTACT}</a>, usually answered within a few working
+  days. There is no guaranteed response time and no uptime commitment for the licensing
+  service, though it is designed so that a paid copy of FlowState keeps working while that
+  service is unreachable.</p>
+
+  <h2>Your rights under New Zealand law</h2>
+  <div class="box">
+    <p>If you are a consumer in New Zealand, the <strong>Consumer Guarantees Act 1993</strong>
+    gives you guarantees that cannot be excluded, and nothing in these terms limits them.
+    The <strong>Fair Trading Act 1986</strong> applies as well. Where those Acts conflict
+    with anything written here, those Acts win.</p>
+    <p>If you acquire FlowState for the purposes of a business, sections 9, 12A, 13 and 14(1)
+    of the Fair Trading Act and the Consumer Guarantees Act do not apply, to the extent the
+    law permits that agreement.</p>
+  </div>
+
+  <h2>Liability</h2>
+  <p>Subject to the section above, and to the extent New Zealand law allows: FlowState is
+  provided as it is, and {LEGAL_ENTITY}'s total liability for any claim relating to it is
+  limited to the amount you paid in the twelve months before the claim. FlowState arranges
+  windows and opens applications on your Mac; it does not modify or delete your documents,
+  but you remain responsible for your own backups.</p>
+
+  <h2>Ending this agreement</h2>
+  <p>You may stop using FlowState at any time. Your licence may be ended if these terms are
+  breached — for example by publishing a licence key — in which case a fair portion of any
+  unused subscription is refunded.</p>
+
+  <h2>Changes</h2>
+  <p>These terms may change as FlowState does. Material changes are announced by email to
+  subscribers and dated here. Continuing to use FlowState after a change means accepting it.</p>
+
+  <h2>Governing law</h2>
+  <p>These terms are governed by New Zealand law, and the New Zealand courts have
+  non-exclusive jurisdiction. If you are a consumer elsewhere, this does not remove any
+  protection you have under the law of your own country.</p>
+
+  <h2>Contact</h2>
+  <p>{LEGAL_ENTITY} · <a href="mailto:{LEGAL_CONTACT}">{LEGAL_CONTACT}</a><br>
+  For billing, refunds or an invoice, contact
+  <a href="https://paddle.net">Paddle</a>, who processed the payment.</p>
+
+  {LEGAL_FOOTER}
+</main>
+"""
+
+REFUNDS = LEGAL_STYLE + f"""<title>Refund Policy — FlowState</title>
+<main>
+  <a class="brand" href="{PAGE_HOME}"><span></span> FlowState</a>
+  <h1>Refund Policy</h1>
+  <p class="updated">Last updated {LEGAL_UPDATED}</p>
+
+  <p class="lede">FlowState has a free trial that needs no card, so you can find out whether
+  it suits you before paying anything. If you paid and it did not work out, ask and you will
+  get your money back.</p>
+
+  <div class="box">
+    <p><strong>Refunds are handled by Paddle</strong>, who is the merchant of record for
+    every FlowState purchase and the company that charged you. The fastest route is
+    <a href="https://paddle.net">paddle.net</a>, where you can find your order using the
+    email address you paid with.</p>
+  </div>
+
+  <h2>The short version</h2>
+  <ul>
+    <li><strong>Within 14 days of a payment</strong> — full refund, no reason needed. This
+      is Paddle's standard buyer refund window and applies to a first payment or a renewal.</li>
+    <li><strong>A renewal you did not intend</strong> — if a subscription renewed and you had
+      meant to cancel, say so and it will be refunded. Nobody wants money for a month you
+      did not want.</li>
+    <li><strong>FlowState does not work on your Mac</strong> — refunded whenever you tell us,
+      inside 14 days or not.</li>
+  </ul>
+
+  <h2>How to ask</h2>
+  <ul>
+    <li>Go to <a href="https://paddle.net">paddle.net</a> and look up your order, or</li>
+    <li>Email <a href="mailto:{LEGAL_CONTACT}">{LEGAL_CONTACT}</a> and it will be arranged
+      for you.</li>
+  </ul>
+  <p>Refunds go back to the card or account you paid from, and usually appear within five to
+  ten working days depending on your bank.</p>
+
+  <h2>Cancelling instead</h2>
+  <p>Cancelling stops the next payment and is not the same as a refund. Your subscription
+  keeps working until the end of the period you have already paid for, and FlowState then
+  returns to its free tier. Nothing you have created is removed.</p>
+
+  <h2>Your rights under New Zealand law</h2>
+  <div class="box">
+    <p>Nothing here limits your rights under the <strong>Consumer Guarantees Act 1993</strong>.
+    If FlowState is faulty, does not match how it was described, or is not fit for the purpose
+    it was sold for, you are entitled to a remedy under that Act regardless of the 14 days
+    above — and if the failure is substantial, you may choose a refund.</p>
+    <p>If you bought from outside New Zealand, your own consumer law may give you further
+    rights, including a statutory right of withdrawal in the EU and UK. Those apply on top of
+    this policy, not instead of it.</p>
+  </div>
+
+  <h2>Contact</h2>
+  <p>{LEGAL_ENTITY} · <a href="mailto:{LEGAL_CONTACT}">{LEGAL_CONTACT}</a></p>
+
+  {LEGAL_FOOTER}
+</main>
+"""
+
+PRIVACY = LEGAL_STYLE + f"""<title>Privacy Policy — FlowState</title>
+<main>
+  <a class="brand" href="{PAGE_HOME}"><span></span> FlowState</a>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated {LEGAL_UPDATED}</p>
+
+  <p class="lede">FlowState is built to know as little about you as possible. The application
+  has no account, no analytics and no telemetry, and your projects never leave your Mac.
+  This page says exactly what does exist, because a privacy policy that only makes promises
+  is not much use.</p>
+
+  <h2>What stays on your Mac</h2>
+  <p>Everything you create in FlowState — projects, folder paths, shortcuts, websites,
+  themes and preferences — is stored in files in your own Application Support folder. It is
+  never uploaded, never synced, and never seen by anyone else. Deleting FlowState and that
+  folder removes it completely.</p>
+
+  <h2>What FlowState sends, and when</h2>
+  <ul>
+    <li><strong>Without a subscription: nothing.</strong> A free or trial copy of FlowState
+      makes no network requests of its own at all.</li>
+    <li><strong>With a subscription:</strong> FlowState contacts its own licensing service to
+      renew your licence, roughly once a month. It sends the licence it already holds, and
+      nothing else — no projects, no paths, no usage.</li>
+  </ul>
+  <p>Opening a link or launching a workspace opens your own browser and applications. Those
+  connections are between you and those sites, exactly as if you had opened them yourself.</p>
+
+  <h2>The licensing service</h2>
+  <p>When you subscribe, a small service run for FlowState stores the minimum needed to know
+  that your subscription is live:</p>
+  <ul>
+    <li>Your Paddle customer and subscription identifiers</li>
+    <li>The email address you used at checkout</li>
+    <li>Whether the subscription is active, and when that was last updated</li>
+  </ul>
+  <p>It holds <strong>no card details, no address and no name</strong> — Paddle has those,
+  and does not pass them on. The service runs on Cloudflare Workers. The records are kept
+  while your subscription exists and removed when it has been over for 90 days.</p>
+
+  <h2>Payment</h2>
+  <p>Payments are taken by <strong>Paddle.com Market Ltd</strong>, the merchant of record for
+  FlowState. Your card details go to Paddle and never to {LEGAL_ENTITY} — they are never seen
+  by, or stored on, anything FlowState runs. Paddle's handling of your information is covered
+  by its own <a href="https://www.paddle.com/legal/privacy">Privacy Notice</a>.</p>
+
+  <h2>The website and downloads</h2>
+  <p>This site has no analytics, no cookies and no trackers. It is hosted on GitHub Pages,
+  and downloads come from GitHub Releases; both keep standard server logs, including IP
+  addresses, under <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement">GitHub's
+  privacy statement</a>. The site loads fonts from Google Fonts, which sees the request for
+  the font file.</p>
+
+  <h2>Permissions FlowState asks for</h2>
+  <ul>
+    <li><strong>Accessibility</strong> — to move and resize windows on your screen. It reads
+      window positions to put them back afterwards. Nothing is recorded or sent, and
+      declining it leaves everything else working.</li>
+    <li><strong>Automation</strong> — asked for only if you have FlowState open a workspace
+      link in a new Safari or Chrome window. It sends that browser a URL and nothing more.</li>
+  </ul>
+  <p>Both can be withdrawn at any time in System Settings, and FlowState keeps running.</p>
+
+  <h2>Your rights</h2>
+  <div class="box">
+    <p>FlowState is operated from New Zealand and follows the <strong>Privacy Act 2020</strong>.
+    You may ask what information is held about you, ask for it to be corrected, or ask for it
+    to be deleted — email <a href="mailto:{LEGAL_CONTACT}">{LEGAL_CONTACT}</a> and you will
+    have an answer within 20 working days.</p>
+    <p>If you are not satisfied with the response, you may complain to the
+    <a href="https://www.privacy.org.nz">Office of the Privacy Commissioner</a>. If you are in
+    the EU or UK, you have equivalent rights under the GDPR, and Paddle acts as the controller
+    for payment information.</p>
+  </div>
+
+  <h2>Changes</h2>
+  <p>This page is dated, and is revised whenever FlowState starts or stops sending anything.
+  Material changes are announced by email to subscribers.</p>
+
+  <h2>Contact</h2>
+  <p>{LEGAL_ENTITY} · <a href="mailto:{LEGAL_CONTACT}">{LEGAL_CONTACT}</a></p>
+
+  {LEGAL_FOOTER}
+</main>
+"""
+
 # Explicit encoding on both ends: the document declares UTF-8 in its first bytes and is
 # written as UTF-8 regardless of the locale of the machine building it. The page carried
 # neither before and rendered only because GitHub Pages happens to send a charset header —
@@ -571,7 +873,8 @@ with open("site/index.html", "w", encoding="utf-8") as f:
 
 # Directories rather than buy.html, so /buy and /buy/ both resolve on GitHub Pages without
 # depending on its extension-guessing.
-for name, page in (("buy", BUY), ("thanks", THANKS)):
+for name, page in (("buy", BUY), ("thanks", THANKS),
+                   ("terms", TERMS), ("refunds", REFUNDS), ("privacy", PRIVACY)):
     os.makedirs(f"site/{name}", exist_ok=True)
     with open(f"site/{name}/index.html", "w", encoding="utf-8") as f:
         f.write(page)
