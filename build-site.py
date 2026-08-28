@@ -214,6 +214,14 @@ def screen(name, caption, cls=""):
 DOWNLOAD = "https://github.com/JoshL1010/flowstate-app/releases/latest/download/FlowState.dmg"
 RELEASES = "https://github.com/JoshL1010/flowstate-app/releases"
 
+# Where /buy sends people. Sandbox today; the live account will issue a different one on a
+# different host, and this is the single line that changes — which is the whole reason the
+# application opens /buy rather than a Paddle URL compiled into a notarized binary.
+CHECKOUT = "https://sandbox-pay.paddle.io/hsc_01m12xm209gkv3y916s4b07bgs_bpgzfw0awwn8hebn90dthk835p6rrmv0"
+
+# The service that turns a completed checkout into a signed licence.
+LICENCE_SERVICE = "https://flowstate-licence.flowstate-app.workers.dev"
+
 BODY = f'''
 <a class="skip" href="#get">Skip to download</a>
 
@@ -384,11 +392,189 @@ BODY = f'''
 </script>
 '''
 
+
+# ── Small pages ────────────────────────────────────────────────────────────────────────
+#
+# /buy and /thanks are the two ends of a purchase. They are separate files rather than
+# sections of the landing page because Paddle redirects to one of them by URL, and because
+# the landing page's 18 KB of CSS is not worth loading to show a sentence and a licence.
+
+# One level down from the site root, so assets and links need a parent-relative path.
+# Absolute paths would work on GitHub Pages, where the site lives under /flowstate-app/, and
+# break locally, where it does not — and this is exactly where that difference is easy to
+# ship without noticing, because the landing page keeps working either way.
+PAGE_ICON = "../media/icon.png"
+PAGE_HOME = "../"
+
+PAGE_STYLE = f"""<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="{PAGE_ICON}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{{--paper:#F7F8F7;--ink:#080D10;--ink2:#525C5F;--ink3:#8A9396;--rule:#E2E6E2;
+  --live:#0E6DB2;--raised:#FFF;--warn:#8A5A00;--warn-bg:#FFF6E5}}
+@media (prefers-color-scheme:dark){{:root{{--paper:#070B0D;--ink:#EDEFEB;--ink2:#98A2A5;
+  --ink3:#667073;--rule:#1C2326;--live:#5CBBF2;--raised:#10161A;--warn:#F0C97A;--warn-bg:#2A2011}}}}
+*{{box-sizing:border-box}}
+body{{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--paper);color:var(--ink);padding:32px 22px;
+  font-family:"Instrument Sans",ui-sans-serif,-apple-system,system-ui,sans-serif;
+  font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}}
+main{{width:min(100%,560px)}}
+h1{{margin:0 0 14px;font-size:clamp(1.7rem,4vw,2.3rem);font-weight:600;letter-spacing:-.03em;
+  line-height:1.1}}
+p{{margin:0 0 16px;color:var(--ink2)}}
+.mono{{font-family:"IBM Plex Mono",monospace}}
+.brand{{display:flex;align-items:center;gap:10px;margin-bottom:30px;font-weight:600;
+  text-decoration:none;color:var(--ink);letter-spacing:-.02em}}
+.brand span{{width:24px;height:24px;border-radius:6px;background-image:url("{PAGE_ICON}");
+  background-size:cover}}
+.card{{background:var(--raised);border:1px solid var(--rule);border-radius:13px;padding:20px}}
+.licence{{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;
+  word-break:break-all;user-select:all;color:var(--ink)}}
+.btn{{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);
+  border:0;font:inherit;font-weight:600;font-size:15px;padding:12px 22px;border-radius:9px;
+  text-decoration:none;cursor:pointer}}
+.btn.secondary{{background:transparent;color:var(--ink);border:1px solid var(--rule)}}
+.row{{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}}
+.note{{font-size:13.5px;color:var(--ink3);margin-top:22px}}
+.warn{{background:var(--warn-bg);color:var(--warn);border-radius:9px;padding:13px 15px;
+  font-size:14px;margin-top:18px}}
+a{{color:var(--live)}}
+.spin{{display:inline-block;width:15px;height:15px;border:2px solid var(--rule);
+  border-top-color:var(--live);border-radius:50%;animation:s .8s linear infinite;
+  vertical-align:-2px;margin-right:8px}}
+@keyframes s{{to{{transform:rotate(360deg)}}}}
+@media (prefers-reduced-motion:reduce){{.spin{{animation:none}}}}
+</style>
+"""
+
+BUY = PAGE_STYLE + f"""<title>Get FlowState Pro</title>
+<meta http-equiv="refresh" content="0;url={CHECKOUT}">
+<main>
+  <a class="brand" href="{PAGE_HOME}"><span></span> FlowState</a>
+  <h1>Taking you to checkout…</h1>
+  <p>Payment is handled by Paddle, who are the merchant of record for FlowState.</p>
+  <p><a href="{CHECKOUT}">Continue to checkout</a> if this page does not move on its own.</p>
+</main>
+<script>location.replace("{CHECKOUT}");</script>
+"""
+
+THANKS = PAGE_STYLE + f"""<title>Thank you — FlowState</title>
+<main>
+  <a class="brand" href="{PAGE_HOME}"><span></span> FlowState</a>
+  <div id="view">
+    <h1><span class="spin"></span>Setting up your licence…</h1>
+    <p>This usually takes a few seconds. Leave this page open.</p>
+  </div>
+</main>
+<script>
+(function(){{
+  var view = document.getElementById("view");
+  var txn = new URLSearchParams(location.search).get("_ptxn");
+  var SERVICE = "{LICENCE_SERVICE}";
+
+  function escapeText(value) {{
+    var node = document.createElement("div");
+    node.textContent = value;
+    return node.innerHTML;
+  }}
+
+  function showLicence(licence) {{
+    view.innerHTML =
+      '<h1>You&rsquo;re all set.</h1>' +
+      '<p>Open FlowState and paste this licence into Settings, or press the button below ' +
+      'and FlowState will take it for you.</p>' +
+      '<div class="card"><div class="licence" id="lic">' + escapeText(licence) + '</div></div>' +
+      '<div class="row">' +
+      '<a class="btn" href="flowstate://licence?token=' + encodeURIComponent(licence) + '">Open in FlowState</a>' +
+      '<button class="btn secondary" id="copy">Copy licence</button>' +
+      '</div>' +
+      '<p class="note">Keep this licence somewhere safe. It is also in your receipt email, ' +
+      'and FlowState renews it on its own while your subscription is active.</p>';
+    document.getElementById("copy").addEventListener("click", function(){{
+      navigator.clipboard.writeText(licence).then(function(){{
+        document.getElementById("copy").textContent = "Copied";
+      }});
+    }});
+  }}
+
+  // `paid` matters. The reassurance is for somebody whose money has left their account and
+  // whose licence has not arrived. Showing it to a person who wandered onto this page
+  // without buying anything tells them they have been charged, which is alarming and false.
+  function showProblem(title, detail, paid) {{
+    view.innerHTML = '<h1>' + title + '</h1><p>' + detail + '</p>' +
+      (paid
+        ? '<div class="warn">Your payment went through — this is only about delivering ' +
+          'the licence. Nothing has been charged twice.</div>' +
+          '<p class="note">Your receipt email also carries the licence. If it has not ' +
+          'arrived, reply to it and it will be sorted out by hand.</p>'
+        : '<p class="note"><a href="{PAGE_HOME}">Back to FlowState</a></p>');
+  }}
+
+  if (!txn) {{
+    showProblem("Nothing to set up here",
+      "This page is where Paddle sends you after a purchase, and it was opened without one.",
+      false);
+    return;
+  }}
+
+  // Paddle's webhook and this redirect race each other, and the browser often wins. 202
+  // means the purchase has not reached the licence service yet, so this waits rather than
+  // reporting a failure that is really just a few seconds of lag.
+  var attempts = 0;
+  (function poll(){{
+    attempts += 1;
+    fetch(SERVICE + "/licence?txn=" + encodeURIComponent(txn))
+      .then(function(response){{
+        if (response.status === 202) {{
+          if (attempts > 20) {{
+            showProblem("This is taking longer than it should",
+              "Your licence has not come through yet. It will arrive by email shortly.", true);
+            return;
+          }}
+          setTimeout(poll, 2000);
+          return;
+        }}
+        if (!response.ok) {{
+          showProblem("Something went wrong",
+            "The licence service could not complete your purchase.", true);
+          return;
+        }}
+        return response.json().then(function(body){{
+          if (body && body.licence) showLicence(body.licence);
+          else showProblem("Something went wrong", "No licence came back.", true);
+        }});
+      }})
+      .catch(function(){{
+        if (attempts > 20) {{
+          showProblem("Could not reach FlowState",
+            "Check your connection. Your licence is also in your receipt email.", true);
+          return;
+        }}
+        setTimeout(poll, 2000);
+      }});
+  }})();
+}})();
+</script>
+"""
+
 # Explicit encoding on both ends: the document declares UTF-8 in its first bytes and is
 # written as UTF-8 regardless of the locale of the machine building it. The page carried
 # neither before and rendered only because GitHub Pages happens to send a charset header —
 # opened from a file, or served by anything that does not, every em dash broke.
 with open("site/index.html", "w", encoding="utf-8") as f:
     f.write(HEAD + BODY)
+
+# Directories rather than buy.html, so /buy and /buy/ both resolve on GitHub Pages without
+# depending on its extension-guessing.
+for name, page in (("buy", BUY), ("thanks", THANKS)):
+    os.makedirs(f"site/{name}", exist_ok=True)
+    with open(f"site/{name}/index.html", "w", encoding="utf-8") as f:
+        f.write(page)
+    print(f"  site/{name}/index.html written")
 size = os.path.getsize("site/index.html")
 print(f"  site/index.html written: {size/1024:.1f} KB")
