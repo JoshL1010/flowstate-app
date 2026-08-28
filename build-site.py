@@ -39,12 +39,12 @@ HEAD = f'''<meta charset="utf-8">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FlowState for Mac">
 <meta property="og:description" content="Every project you own, one keystroke away. A macOS workspace launcher that waits at the edge of your screen.">
-<meta property="og:image" content="https://joshl1010.github.io/flowstate-app/media/og.jpg">
-<meta property="og:url" content="https://joshl1010.github.io/flowstate-app/">
+<meta property="og:image" content="https://flowstatemac.com/media/og.jpg">
+<meta property="og:url" content="https://flowstatemac.com/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="FlowState for Mac">
 <meta name="twitter:description" content="Every project you own, one keystroke away.">
-<meta name="twitter:image" content="https://joshl1010.github.io/flowstate-app/media/og.jpg">
+<meta name="twitter:image" content="https://flowstatemac.com/media/og.jpg">
 <meta name="theme-color" content="#0E6DB2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -582,7 +582,7 @@ LEGAL_ENTITY = "Joshua Lafrentz"
 # Where support reaches a human. Move this to an address on the FlowState domain once one
 # exists — but never leave it pointing somewhere unmonitored, because Paddle checks it and
 # customers use it.
-LEGAL_CONTACT = "joshlafrentz@gmail.com"
+LEGAL_CONTACT = "support@flowstatemac.com"
 
 LEGAL_UPDATED = "28 August 2026"
 
