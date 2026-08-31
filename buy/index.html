@@ -43,11 +43,93 @@ a{color:var(--live)}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 </style>
 <title>Get FlowState Pro</title>
-<meta http-equiv="refresh" content="0;url=https://sandbox-pay.paddle.io/hsc_01m12xm209gkv3y916s4b07bgs_bpgzfw0awwn8hebn90dthk835p6rrmv0">
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <main>
   <a class="brand" href="../"><span></span> FlowState</a>
-  <h1>Taking you to checkout…</h1>
-  <p>Payment is handled by Paddle, who are the merchant of record for FlowState.</p>
-  <p><a href="https://sandbox-pay.paddle.io/hsc_01m12xm209gkv3y916s4b07bgs_bpgzfw0awwn8hebn90dthk835p6rrmv0">Continue to checkout</a> if this page does not move on its own.</p>
+  <div id="view" aria-live="polite">
+    <h1><span class="spin"></span>Opening secure checkout…</h1>
+    <p>Payment is handled by Paddle, who are the merchant of record for FlowState.</p>
+  </div>
+  <noscript><p>Checkout needs JavaScript. Enable it and reload, or email
+    <a href="mailto:support@flowstatemac.com">support@flowstatemac.com</a>.</p></noscript>
 </main>
-<script>location.replace("https://sandbox-pay.paddle.io/hsc_01m12xm209gkv3y916s4b07bgs_bpgzfw0awwn8hebn90dthk835p6rrmv0");</script>
+<script>
+(function(){
+  var view = document.getElementById("view");
+  var opening = false;
+
+  function ready(detail) {
+    opening = false;
+    view.innerHTML = '<h1>Get FlowState Pro</h1>' +
+      '<p>' + detail + '</p>' +
+      '<div class="row"><button class="btn" id="checkout">Open secure checkout</button></div>' +
+      '<p class="note">Payment is handled by Paddle. FlowState never sees your card details.</p>';
+    document.getElementById("checkout").addEventListener("click", openCheckout);
+  }
+
+  function problem(detail) {
+    opening = false;
+    view.innerHTML = '<h1>Checkout could not open</h1><p>' + detail + '</p>' +
+      '<div class="row"><button class="btn" id="again">Try again</button></div>' +
+      '<p class="note">If it still will not open, email ' +
+      '<a href="mailto:support@flowstatemac.com">support@flowstatemac.com</a>.</p>';
+    document.getElementById("again").addEventListener("click", function(){
+      location.reload();
+    });
+  }
+
+  function openCheckout() {
+    if (opening) return;
+    opening = true;
+    try {
+      Paddle.Checkout.open({
+        items: [{ priceId: "pri_01m12v8xnn38xjj1rt43r1wk29", quantity: 1 }],
+        settings: { variant: "one-page" }
+      });
+    } catch (error) {
+      problem("The secure payment window did not load. Nothing has been charged.");
+    }
+  }
+
+  function checkoutEvent(event) {
+    if (!event || !event.name) return;
+    if (event.name === "checkout.completed") {
+      var transactionId = event.data && event.data.transaction_id;
+      // Only a Paddle transaction id may cross into the licence handoff. The webhook still
+      // proves payment; this browser value is only the unguessable lookup key for that proof.
+      if (typeof transactionId === "string" && /^txn_[a-z0-9]{26}$/.test(transactionId)) {
+        var target = new URL("../thanks/", location.href);
+        target.searchParams.set("_ptxn", transactionId);
+        location.assign(target.href);
+      } else {
+        problem("Payment completed, but Paddle did not return its transaction reference. " +
+          "Nothing has been charged twice.");
+      }
+      return;
+    }
+    if (event.name === "checkout.closed") {
+      ready("Checkout was closed. You can reopen it when you are ready.");
+    } else if (event.name === "checkout.error") {
+      problem("Paddle could not start checkout. Nothing has been charged.");
+    }
+  }
+
+  try {
+    if (!window.Paddle) throw new Error("Paddle.js unavailable");
+    Paddle.Environment.set("sandbox");
+    Paddle.Initialize({
+      token: "test_8eda24f230548cfaf2bec6c0aab",
+      eventCallback: checkoutEvent
+    });
+    ready("US$7 per month. Cancel any time.");
+    openCheckout();
+  } catch (error) {
+    problem("The secure payment service did not load. Nothing has been charged.");
+  }
+
+  // There is deliberately no static successUrl. It cannot carry Paddle's dynamic
+  // transaction id and was the cause of the broken hosted-checkout handoff. If Paddle.js
+  // cannot supply checkout.completed, this page fails visibly instead of opening /thanks
+  // without the credential that page needs.
+})();
+</script>

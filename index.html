@@ -1,4 +1,9 @@
 <meta charset="utf-8">
+<!-- Without this the page renders at desktop width on a phone and every max-width rule
+     below is dead. The subpages carried it and the landing page did not, which is the one
+     place it is least likely to be noticed from a Mac and most likely to be seen by
+     somebody following a link from their phone. -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FlowState for Mac</title>
 <meta name="description" content="A native macOS workspace launcher. Opens the editor, terminal, repository and pages a project needs — arranged — in one keystroke. Free while in beta.">
 <link rel="icon" href="media/icon.png">
@@ -153,6 +158,37 @@ td{color:var(--ink2)}
   flex:none;transform:translateY(-3px)}
 .fine{margin-top:28px;font-size:13.5px;color:var(--ink3);line-height:1.65;max-width:42ch}
 
+/* First run. A notarized app downloaded outside the App Store still makes people
+   hesitate, and the hesitation happens at the exact moment the page is no longer in
+   front of them. Saying what the three steps look like removes the doubt in advance. */
+.steps{list-style:none;margin:46px 0 0;padding:0;display:grid;gap:18px;
+  grid-template-columns:repeat(3,1fr);counter-reset:s}
+@media (max-width:820px){.steps{grid-template-columns:1fr}}
+.steps li{counter-increment:s;background:var(--raised);border:1px solid var(--rule);
+  border-radius:13px;padding:22px 22px 24px}
+.steps li::before{content:counter(s,decimal-leading-zero);display:block;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;
+  color:var(--ink3);margin-bottom:14px}
+.steps b{display:block;font-weight:600;font-size:16.5px;margin-bottom:8px;
+  letter-spacing:-.015em}
+.steps p{color:var(--ink2);font-size:15px}
+
+/* Questions people actually ask, answered without needing to email anyone. <details>
+   rather than script, so it works with JavaScript off and is findable by in-page search
+   in browsers that expand hidden content for it. */
+.faq{margin-top:44px;border-top:1px solid var(--rule)}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{list-style:none;cursor:pointer;padding:19px 34px 19px 0;position:relative;
+  font-weight:500;font-size:16.5px;letter-spacing:-.012em;transition:color .2s}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--live)}
+.faq summary::after{content:"";position:absolute;right:6px;top:50%;width:9px;height:9px;
+  border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);
+  transform:translateY(-70%) rotate(45deg);transition:transform .25s var(--ease)}
+.faq details[open] summary::after{transform:translateY(-25%) rotate(-135deg)}
+.faq .a{padding:0 0 22px;color:var(--ink2);font-size:15.5px;max-width:62ch}
+.faq .a p+p{margin-top:12px}
+
 .close{text-align:center;padding:clamp(84px,11vw,150px) 0}
 .close h2{font-size:clamp(2.1rem,5.4vw,4rem);max-width:15ch;margin-inline:auto;letter-spacing:-.038em}
 .close p{margin-top:22px;color:var(--ink2);max-width:44ch;margin-inline:auto}
@@ -175,8 +211,9 @@ footer a:hover{color:var(--ink2)}
 <nav id="nav"><div class="wrap nav-in">
   <a class="logo" href="#top"><span class="logo-mark"></span> FlowState</a>
   <span class="nav-links">
+    <a class="plain" href="#install">Install</a>
     <a class="plain" href="#pricing">Pricing</a>
-    <a class="plain" href="https://github.com/JoshL1010/flowstate-app/releases">Release notes</a>
+    <a class="plain" href="#faq">Questions</a>
     <a class="btn btn-line" href="https://github.com/JoshL1010/flowstate-app/releases/latest/download/FlowState.dmg">Download</a>
   </span>
 </div></nav>
@@ -238,16 +275,38 @@ footer a:hover{color:var(--ink2)}
 
 <div class="quiet"><div class="wrap">
   <div class="lede rv rv-u">
-    <h2>It never phones home, because there is no home to phone.</h2>
-    <p>No account, no analytics, no telemetry, no third-party SDKs and no server of any kind.
-      Your projects, paths and preferences are files in your own Application Support folder.</p>
+    <h2>There is no account, and nothing to sign in to.</h2>
+    <p>No sign-up, no analytics, no telemetry and no profile of you anywhere. Your projects,
+      paths and preferences are plain files in your own Application Support folder &mdash;
+      readable by you, and gone completely when you delete them.</p>
   </div>
   <table class="rv rv-u" style="--i:1"><tbody>
-    <tr><th scope="row">Accessibility</th><td>Optional. Lets FlowState move and resize windows — decline it and everything else still works, it simply stops rearranging anything.</td></tr>
+    <tr><th scope="row">Accessibility</th><td>Optional. Lets FlowState move and resize windows &mdash; decline it and everything else still works, it simply stops rearranging anything.</td></tr>
     <tr><th scope="row">Automation</th><td>Optional. Requested only if you ask a workspace link to open in a new Safari or Chrome window on your current desktop.</td></tr>
-    <tr><th scope="row">Network</th><td>None while FlowState is free. A paid subscription checks its licence against FlowState&rsquo;s own service about once a month, and sends nothing else &mdash; no projects, no paths, no usage. <a href="privacy/">Full detail</a>.</td></tr>
-    <tr><th scope="row">Signature</th><td>Developer ID, notarized by Apple. Both permissions revocable at any time in System Settings.</td></tr>
+    <tr><th scope="row">Updates</th><td>FlowState checks for a new version, and every update is signed with a key only the release machine holds &mdash; so an installed copy will not accept a build that did not come from here. Turn the check off in Settings if you would rather update by hand.</td></tr>
+    <tr><th scope="row">Network</th><td>The update check, and &mdash; if you subscribe &mdash; a licence renewal about once a month that sends the licence FlowState already holds. Nothing else leaves your Mac: no projects, no paths, no usage. <a href="privacy/">Full detail</a>.</td></tr>
+    <tr><th scope="row">Signature</th><td>Developer ID, notarized by Apple, opens with a double click. Both permissions revocable at any time in System Settings.</td></tr>
   </tbody></table>
+</div></div>
+
+<div class="story" id="install"><div class="wrap">
+  <div class="lede rv rv-u">
+    <h2>Five minutes from download to your first launch.</h2>
+    <p>FlowState is signed with a Developer ID certificate and notarized by Apple, so it
+      opens with a double click like anything else. No right-click trick, no warning to
+      dismiss, no Terminal.</p>
+  </div>
+  <ol class="steps">
+    <li class="rv rv-u"><b>Open the disk image</b>
+      <p>Drag FlowState to Applications and open it. It has no Dock icon and no window &mdash;
+        it lives at the edge of the screen, so the first launch shows you where.</p></li>
+    <li class="rv rv-u" style="--i:1"><b>Add one project</b>
+      <p>Point it at a folder and tick what should open with it: the editor, a terminal, the
+        repository, the pages you always have open. It reads the plan back to you.</p></li>
+    <li class="rv rv-u" style="--i:2"><b>Press Launch</b>
+      <p>Grant Accessibility when asked if you want windows arranged, or skip it &mdash;
+        everything else works either way, and you can grant it later.</p></li>
+  </ol>
 </div></div>
 
 <div class="price" id="pricing"><div class="wrap">
@@ -268,18 +327,100 @@ footer a:hover{color:var(--ink2)}
       </ul>
     </div>
     <div class="rv rv-r" style="--i:2">
-      <h3 style="font-size:1.2rem;margin-bottom:14px">Why a subscription</h3>
+      <h3 style="font-size:1.2rem;margin-bottom:14px">If you stop paying</h3>
+      <p style="color:var(--ink2);font-size:15.5px;max-width:40ch">
+        FlowState keeps running with two projects, and without window arrangement, Appearance
+        Studio or AI handoff. <strong style="color:var(--ink);font-weight:600">Nothing you
+        made is taken away</strong> &mdash; your projects, shortcuts and themes are files on
+        your Mac and stay readable whether you pay or not.
+      </p>
+      <h3 style="font-size:1.2rem;margin:26px 0 14px">Why a subscription</h3>
       <p style="color:var(--ink2);font-size:15.5px;max-width:40ch">
         FlowState is one person's work and macOS changes every year. A subscription is what
         pays for it to keep working on the next version instead of being abandoned, which is
         what happens to most small Mac utilities eventually.
       </p>
       <p class="fine">
-        Seven-day free trial, no card up front. Cancel whenever you like and it keeps working
-        until the period you have paid for ends. Beta testers keep full access for the whole
-        beta, with plenty of warning before anything changes.
+        Fourteen-day free trial, no card up front &mdash; it starts when you do, and long
+        enough to cover a real work cycle. Cancel whenever you like and it keeps working until
+        the period you have paid for ends. Beta testers keep full access for the whole beta,
+        with plenty of warning before anything changes.
       </p>
     </div>
+  </div>
+</div></div>
+
+<div class="quiet" id="faq"><div class="wrap">
+  <div class="lede rv rv-u">
+    <h2>Questions worth answering before you download it.</h2>
+    <p>These are the ones testers actually asked. If yours is not here, ask it &mdash;
+      <a href="mailto:support@flowstatemac.com">support@flowstatemac.com</a> reaches one person.</p>
+  </div>
+  <div class="faq rv rv-u" style="--i:1">
+    <details>
+      <summary>Is it really free at the moment?</summary>
+      <div class="a"><p>Yes, and completely. During the beta every feature is unlocked, no
+        trial clock is running, there is nothing to buy and no card is asked for. When that
+        changes it will be announced first, not switched off one morning.</p></div>
+    </details>
+    <details>
+      <summary>What does it actually do that Spaces or Stage Manager does not?</summary>
+      <div class="a"><p>Those arrange the windows you have already opened. FlowState opens
+        them. One keystroke starts the editor on the right folder, a terminal already in that
+        directory, the repository and the pages that project needs, and puts them where you
+        want them &mdash; from nothing.</p></div>
+    </details>
+    <details>
+      <summary>Does it work with my editor and my terminal?</summary>
+      <div class="a"><p>It launches whatever is on your Mac, so anything you can open from
+        Finder works &mdash; Xcode, VS Code, Cursor, Zed, JetBrains, Terminal, iTerm, Ghostty,
+        Warp. Nothing needs a plugin, because FlowState opens applications rather than
+        integrating with them.</p></div>
+    </details>
+    <details>
+      <summary>Why does it want Accessibility access?</summary>
+      <div class="a"><p>That permission is the only way macOS lets one application move
+        another one&rsquo;s windows, which is what the arranging is. It reads window positions
+        to put them back and nothing else is recorded or sent.</p>
+        <p>Declining it is a real option: everything still opens, it just opens wherever macOS
+        would have put it. You can grant it later in System Settings without reinstalling.</p></div>
+    </details>
+    <details>
+      <summary>Why is it not on the Mac App Store?</summary>
+      <div class="a"><p>Because the App Store requires a sandboxed build, and the sandbox
+        forbids moving other applications&rsquo; windows &mdash; there is no entitlement that
+        lifts it. An App Store version of FlowState could not arrange anything, which is most
+        of the point of it. Downloading it here gets the whole application, signed with a
+        Developer ID certificate and notarized by Apple.</p></div>
+    </details>
+    <details>
+      <summary>How do updates work?</summary>
+      <div class="a"><p>FlowState checks for a new version and offers it to you. Every update
+        carries a signature made with a key that only the release machine holds, so an
+        installed copy will refuse a build that did not come from here even if the download
+        itself were tampered with. The check can be turned off in Settings.</p></div>
+    </details>
+    <details>
+      <summary>Does it work with more than one monitor?</summary>
+      <div class="a"><p>It runs, and it is honestly not tested well on multiple displays yet
+        &mdash; arrangement is written against the screen the panel is on. If you use several,
+        that is exactly the report worth sending.</p></div>
+    </details>
+    <details>
+      <summary>What happens to my projects if I stop paying, or if FlowState stops?</summary>
+      <div class="a"><p>They stay. Everything you configure lives in plain files in your own
+        Application Support folder, not in an account and not on a server. The free tier keeps
+        two projects working; the files for the rest are still there and still readable, and
+        come back the moment a subscription does.</p></div>
+    </details>
+    <details>
+      <summary>Who am I buying from, and how do refunds work?</summary>
+      <div class="a"><p>FlowState is made by one person in New Zealand and sold through
+        Paddle, who are the merchant of record &mdash; they take the payment, handle tax
+        wherever you are, and appear on your statement. Refunds are available within 14 days
+        of any payment, no reason needed. <a href="refunds/">The refund policy</a> has the
+        detail.</p></div>
+    </details>
   </div>
 </div></div>
 
@@ -296,7 +437,8 @@ footer a:hover{color:var(--ink2)}
 </div></div>
 
 <footer><div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 26px">
-  <span>FlowState 0.2.5 beta</span>
+  <span>FlowState 0.2.6 beta</span>
+  <a href="#faq">Questions</a>
   <a href="terms/">Terms</a>
   <a href="refunds/">Refunds</a>
   <a href="privacy/">Privacy</a>

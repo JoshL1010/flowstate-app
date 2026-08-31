@@ -72,8 +72,10 @@ a{color:var(--live)}
       '<a class="btn" href="flowstate://licence?token=' + encodeURIComponent(licence) + '">Open in FlowState</a>' +
       '<button class="btn secondary" id="copy">Copy licence</button>' +
       '</div>' +
-      '<p class="note">Keep this licence somewhere safe. It is also in your receipt email, ' +
-      'and FlowState renews it on its own while your subscription is active.</p>';
+      '<p class="note">Keep this licence somewhere safe. FlowState renews it on its own ' +
+      'while your subscription is active, and this page will show it again for the next ' +
+      'few days if you return to this exact address &mdash; so bookmark it before you ' +
+      'close the tab.</p>';
     document.getElementById("copy").addEventListener("click", function(){
       navigator.clipboard.writeText(licence).then(function(){
         document.getElementById("copy").textContent = "Copied";
@@ -89,9 +91,15 @@ a{color:var(--live)}
       (paid
         ? '<div class="warn">Your payment went through — this is only about delivering ' +
           'the licence. Nothing has been charged twice.</div>' +
-          '<p class="note">Your receipt email also carries the licence. If it has not ' +
-          'arrived, reply to it and it will be sorted out by hand.</p>'
+          '<div class="row"><button class="btn" id="again">Try again</button></div>' +
+          '<p class="note">Reloading this page is worth doing more than once: your licence ' +
+          'is held against this page&rsquo;s address for the next seven days, and the delay ' +
+          'is almost always the payment taking a moment to reach us. If it still will not ' +
+          'appear, email <a href="mailto:support@flowstatemac.com">support@flowstatemac.com</a> with the ' +
+          'address you paid with and it will be issued by hand.</p>'
         : '<p class="note"><a href="../">Back to FlowState</a></p>');
+    var again = document.getElementById("again");
+    if (again) again.addEventListener("click", function(){ location.reload(); });
   }
 
   if (!txn) {
@@ -112,7 +120,8 @@ a{color:var(--live)}
         if (response.status === 202) {
           if (attempts > 20) {
             showProblem("This is taking longer than it should",
-              "Your licence has not come through yet. It will arrive by email shortly.", true);
+              "Your licence has not come through yet. Payments usually reach us within a " +
+              "minute, so this is worth another try.", true);
             return;
           }
           setTimeout(poll, 2000);
@@ -131,7 +140,7 @@ a{color:var(--live)}
       .catch(function(){
         if (attempts > 20) {
           showProblem("Could not reach FlowState",
-            "Check your connection. Your licence is also in your receipt email.", true);
+            "Your licence could not be fetched. Check your connection and try again.", true);
           return;
         }
         setTimeout(poll, 2000);
