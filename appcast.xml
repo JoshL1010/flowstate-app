@@ -8,11 +8,27 @@
 
     <item>
         <title>0.2.7</title>
-        <pubDate>Thu, 03 Sep 2026 11:04:39 GMT</pubDate>
+        <pubDate>Thu, 03 Sep 2026 11:59:19 GMT</pubDate>
         <sparkle:version>14</sparkle:version>
         <sparkle:shortVersionString>0.2.7</sparkle:shortVersionString>
         <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-        <sparkle:releaseNotesLink>https://github.com/JoshL1010/flowstate-app/releases/tag/v0.2.7</sparkle:releaseNotesLink>
+        <description><![CDATA[
+    <style>
+      body{font:13.5px/1.55 -apple-system,system-ui,sans-serif;margin:0;padding:2px 4px}
+      h2{font-size:15px;margin:0 0 8px}
+      p{margin:0 0 10px}
+      ul{margin:0 0 10px;padding-left:20px}
+      li{margin-bottom:5px}
+      code{font-family:ui-monospace,SFMono-Regular,monospace;font-size:12.5px}
+    </style>
+    <h2>A rehearsal, published on purpose</h2>
+    <p><strong>0.2.7 is the same application as 0.2.6.</strong> No features changed and
+    nothing was fixed. It exists so the update mechanism itself could be run once end to
+    end — published, signed, put in the feed, and applied by a real installed copy — while
+    the number of people an error could affect was zero.</p>
+    <p>If you are reading this, that worked, and this is the first FlowState update that
+    has ever arrived on its own.</p>
+        ]]></description>
         <enclosure url="https://github.com/JoshL1010/flowstate-app/releases/download/v0.2.7/FlowState.dmg"
                    length="3914224"
                    type="application/octet-stream"
