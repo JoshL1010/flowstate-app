@@ -286,11 +286,65 @@ footer a:hover{color:var(--ink2)}
   .cta .note{width:100%}
 }
 
+/* The mailing list. One field, and it has to look like it belongs to the same product as
+   the panel in the clips rather than like a plugin dropped onto the end of the page. */
+@property --ring{syntax:'<angle>';initial-value:0deg;inherits:false}
+.signal{position:relative;padding:clamp(76px,9.5vw,126px) 0;border-top:1px solid var(--line)}
+.join{margin-top:38px;max-width:540px}
+.field{position:relative;display:flex;gap:9px;align-items:center;padding:7px 7px 7px 8px;
+  border-radius:16px;background:rgba(255,255,255,.042);border:1px solid var(--line);
+  transition:border-color .3s var(--ease),background .3s var(--ease)}
+.field:hover{border-color:var(--line2)}
+/* A one-pixel ring that exists only while the field has focus, drawn with a mask so it is
+   an outline rather than a glow sitting behind the box. Degrades to a static ring where
+   @property is unsupported, which is the right way round. */
+.field::before{content:"";position:absolute;inset:-1px;border-radius:17px;padding:1px;
+  background:conic-gradient(from var(--ring),var(--live),var(--live2),var(--live3),var(--live));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;opacity:0;transition:opacity .35s var(--ease);pointer-events:none}
+.field:focus-within::before{opacity:1;animation:ring 4.5s linear infinite}
+@keyframes ring{to{--ring:360deg}}
+.field input[type=email]{flex:1;min-width:0;background:none;border:0;outline:none;
+  color:var(--ink);font:inherit;font-size:16px;padding:11px 12px}
+.field input::placeholder{color:var(--ink3)}
+.field .btn{flex:none}
+/* Off-screen rather than display:none, because a field that is not rendered is not filled
+   in by the bots this is here to catch. */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+/* Side by side, the field and the button leave about 160px to type an address into on a
+   phone — enough to work and not enough to read back what you typed. Stacked, both get the
+   full width, which is the one thing a single-field form can always afford. */
+@media (max-width:520px){
+  .field{flex-direction:column;align-items:stretch;gap:7px;padding:7px}
+  .field input[type=email]{padding:13px 12px;text-align:center}
+  .field .btn{width:100%;padding-block:13px}
+}
+.join-note{margin-top:15px;font-size:13.5px;color:var(--ink3);line-height:1.6;max-width:52ch}
+.join-note a{color:var(--ink2)}
+.join.busy .field{opacity:.6;pointer-events:none}
+.join.bad .field{border-color:#E0794F}
+.join-note.bad{color:#E0955F}
+
+/* On success the field is replaced in place rather than the page jumping to a new message
+   somewhere else. Same box, same size, different contents. */
+.done-line{display:none;align-items:center;gap:12px;padding:18px 8px 18px 18px;
+  border-radius:16px;border:1px solid rgba(62,224,196,.34);
+  background:linear-gradient(120deg,rgba(62,224,196,.10),rgba(92,187,242,.05));
+  font-size:16px;animation:settle .6s var(--out)}
+@keyframes settle{from{opacity:0;transform:translateY(8px) scale(.98)}}
+.join.done .field,.join.done .join-note{display:none}
+.join.done .done-line{display:flex}
+.tick{width:22px;height:22px;flex:none;border-radius:50%;background:var(--live3);
+  display:flex;align-items:center;justify-content:center;color:#04060A;font-size:13px;
+  font-weight:700;box-shadow:0 0 18px rgba(62,224,196,.55)}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
   .rv{opacity:1;transform:none;filter:none}
   .kin span,.hero .sub,.cta,.spec{opacity:1;filter:none;transform:none}
+  .field:focus-within::before{animation:none;opacity:1}
   .screen:hover{transform:none}
   .dock{transform:none}
 }
@@ -389,7 +443,7 @@ footer a:hover{color:var(--ink2)}
 <div class="quiet"><div class="wrap">
   <div class="lede rv">
     <h2>There is no account, and nothing to sign in to.</h2>
-    <p>No sign-up, no analytics, no telemetry and no profile of you anywhere. Your projects,
+    <p>No account, no analytics, no telemetry and no profile of you anywhere. Your projects,
       paths and preferences are plain files in your own Application Support folder &mdash;
       readable by you, and gone completely when you delete them.</p>
   </div>
@@ -533,6 +587,29 @@ footer a:hover{color:var(--ink2)}
   </div>
 </div></div>
 
+<div class="signal"><div class="wrap">
+  <div class="lede rv">
+    <h2>Be told when there is something new.</h2>
+    <p>FlowState updates itself now. The people who downloaded it before it could cannot be
+      reached at all &mdash; there was never anywhere to write an address down. This is that
+      place: one short email when a release is worth your attention, and nothing else.</p>
+  </div>
+  <form class="join rv" id="join" style="--i:1" novalidate>
+    <label class="hp" aria-hidden="true">Leave this field empty
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off"></label>
+    <div class="field">
+      <input type="email" name="email" id="join-email" required placeholder="you@example.com"
+             autocomplete="email" spellcheck="false" aria-label="Your email address">
+      <button class="btn btn-solid" type="submit">Keep me posted</button>
+    </div>
+    <p class="join-note" id="join-note">Your address, the date, and which page you were on
+      &mdash; nothing else, and no list anywhere but FlowState&rsquo;s own.
+      <a href="privacy/">What is stored</a>.</p>
+    <div class="done-line"><span class="tick">&#10003;</span>
+      <span>Noted. You will hear from FlowState when there is a release worth the email.</span></div>
+  </form>
+</div></div>
+
 <div class="close" id="get"><div class="wrap">
   <h2 class="rv">Try it on the project you are most behind on.</h2>
   <p class="rv" style="--i:1">
@@ -621,6 +698,51 @@ footer a:hover{color:var(--ink2)}
         var r = li.getBoundingClientRect();
         li.style.setProperty("--mx", (e.clientX - r.left) + "px");
         li.style.setProperty("--my", (e.clientY - r.top) + "px");
+      });
+    });
+  }
+
+  // The mailing list. The form has no action attribute on purpose: without script it does
+  // nothing at all, rather than navigating somewhere that cannot answer it. A dead button
+  // is a smaller lie than a page that looks like it accepted an address and did not.
+  var join = document.getElementById("join");
+  if (join) {
+    var note = document.getElementById("join-note");
+    var field = document.getElementById("join-email");
+    var fail = function(message){
+      join.classList.remove("busy");
+      join.classList.add("bad");
+      note.classList.add("bad");
+      note.textContent = message;
+    };
+    join.addEventListener("submit", function(e){
+      e.preventDefault();
+      if (join.classList.contains("busy") || join.classList.contains("done")) return;
+      var email = field.value.trim();
+      // Checked here only to save a round trip on an obvious typo. The Worker validates
+      // properly; a browser is not where you decide what an address is.
+      if (email.indexOf("@") < 1 || email.lastIndexOf(".") < email.indexOf("@")) {
+        fail("That does not look like an email address.");
+        field.focus();
+        return;
+      }
+      join.classList.remove("bad");
+      note.classList.remove("bad");
+      join.classList.add("busy");
+      fetch("https://flowstate-list.flowstate-app.workers.dev/subscribe", {
+        method: "POST",
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify({
+          email: email,
+          source: "landing",
+          website: join.elements.website ? join.elements.website.value : ""
+        })
+      }).then(function(r){
+        if (r.ok) { join.classList.remove("busy"); join.classList.add("done"); return; }
+        if (r.status === 429) { fail("That is a lot of tries from one place. Give it an hour."); return; }
+        fail("That did not send. Try again, or email support@flowstatemac.com.");
+      }).catch(function(){
+        fail("That did not send — you may be offline. Try again, or email support@flowstatemac.com.");
       });
     });
   }
