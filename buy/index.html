@@ -88,7 +88,7 @@ a{color:var(--live)}
     opening = true;
     try {
       Paddle.Checkout.open({
-        items: [{ priceId: "pri_01m12v8xnn38xjj1rt43r1wk29", quantity: 1 }],
+        items: [{ priceId: "pri_01m1nd4jab3cmdhdttqny45xyr", quantity: 1 }],
         settings: { variant: "one-page" }
       });
     } catch (error) {
@@ -121,9 +121,9 @@ a{color:var(--live)}
 
   try {
     if (!window.Paddle) throw new Error("Paddle.js unavailable");
-    Paddle.Environment.set("sandbox");
+    // production is Paddle.js's default; no environment call is needed
     Paddle.Initialize({
-      token: "test_8eda24f230548cfaf2bec6c0aab",
+      token: "live_1c7a756629e0b508f42fbabe16d",
       eventCallback: checkoutEvent
     });
     ready("US$7 per month. Cancel any time.");
